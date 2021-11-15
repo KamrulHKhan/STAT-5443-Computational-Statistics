@@ -1,0 +1,94 @@
+---
+title: "Homework 4"
+author: "Md Kamrul Hasan Khan"
+date: "April 14, 2017"
+output: pdf_document
+---
+```{r setup1 , echo=F}
+knitr::opts_chunk$set(warning=F)
+```
+\begin{center}
+\textbf{\textit{\underline{Answer to the question no 1}}}
+\end{center}
+```{r setup }
+set.seed(1000)
+library(glmnet)
+library(DAAG)
+
+n = 100
+p = 500
+p0 = 150
+alpha = seq(0,1, length.out = 100)
+ 
+x = matrix(rnorm(n*p, 0, 1), nrow = n, ncol = p, byrow = FALSE)
+
+beta = c(rep(5,p0), rep(0, p-p0))
+eps = rnorm(n)
+fx = x %*% beta
+y = fx + eps 
+
+train_rows = sample(1:n, n/2)
+x_train = x[train_rows,]
+x_test = x[-train_rows,]
+
+y_train = y[train_rows,]
+y_test = y[-train_rows,]
+
+mse_enet_store = vector( length=length(alpha)-2)
+lambda_min = vector( length=length(alpha)-2)
+
+lambda_min_best = vector( length = 3)
+
+for (i in 2: (length(alpha)-1))
+{
+fit_enet <- cv.glmnet(x_train, y_train, type.measure = "mse",alpha= alpha[i])
+
+lambda_min[i-1] = fit_enet$lambda.min
+
+yhat_enet <- predict(fit_enet, s=fit_enet$lambda.1se, newx = x_test)
+
+mse_enet_store[i-1] <- mean((y_test - yhat_enet)^2)
+
+fit_enet_glm <- glmnet(x_train, y_train, alpha= alpha[i])
+
+}
+
+a0 <-which.min(mse_enet_store)
+
+(alpha_best <- alpha[a0-1])
+
+fit_ridge <- cv.glmnet(x_train, y_train, type.measure = "dev",alpha= 0)
+
+lambda_min[1] = fit_ridge$lambda.min
+
+plot(fit_ridge)
+
+fit_enet_best <- cv.glmnet(x_train, y_train, type.measure = "mse",alpha= alpha_best)
+
+lambda_min[2] = fit_enet_best$lambda.min
+
+plot(fit_enet_best)
+
+fit_lasso <- cv.glmnet(x_train, y_train, type.measure = "mse",alpha= 1)
+
+lambda_min[3] = fit_lasso$lambda.min
+
+plot(fit_lasso)
+
+fit_redge_glm <- glmnet(x_train, y_train, alpha= 0)
+
+plot(fit_redge_glm, xvar = "lambda")
+
+fit_enet_glm_best <- glmnet(x_train, y_train, alpha= alpha_best)
+
+plot(fit_enet_glm_best, xvar = "lambda")
+
+fit_lasso_glm <- glmnet(x_train, y_train, alpha= 1)
+
+plot(fit_lasso_glm, xvar = "lambda")
+
+```
+\textbf{Comments:}
+Here, I have taken a grid of 98 values for Elastic Net and chosen best alpha for which the model has lowest MSE.
+
+I also found the Elastic Net as the best model comparing with Lasso and Ridge because it has lowest MSE.

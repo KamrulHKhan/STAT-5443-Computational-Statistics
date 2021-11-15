@@ -1,0 +1,226 @@
+---
+title: "Homework 1"
+author: "Md Kamrul Hasan Khan"
+date: "February 17, 2017"
+output: pdf_document
+---
+\begin{center}
+\center{ \textbf{\textit{\underline{Answer to the Question Number 1}}}}
+\end{center}
+```{r}
+
+(x<- c(9:16))
+
+tail(x,3)
+
+x[(x%%2 == 0)]
+
+x[-which(x%%2 == 0)]
+
+```
+
+\begin{center}
+\center{ \textbf{\textit{\underline{Answer to the Question Number 2}}}}
+\end{center}
+```{r}
+n = 25
+# for loop
+
+sum = 0
+for (i in 1:n)
+{
+  sum = sum + (0.5^i)
+}
+sum
+
+
+# while loop
+
+sum = 0
+i <- 1
+while (i <= n)
+{
+  sum = sum + (0.5^i)
+  i = i+1
+}
+sum
+
+# without using a loop
+```
+
+Sum of the Geometric series: 
+$$\sum_{i=1}^{n}a^{i} = a\Big(\dfrac{1-r^n}{1-r}\Big)$$
+
+
+```{r}
+n = 25
+a = 1/2
+r = 1/2
+sum <- a*((1-r^n)/(1-r))
+sum
+```
+As n increases the sum tends to 1.
+
+If n is large, without using loop program will be more robust to errors.
+
+\begin{center}
+\center{ \textbf{\textit{\underline{Answer to the Question Number 3}}}}
+\end{center}
+\textbf{Question I:} $x^3$ is $O(x^3)$ and $\Theta(x^3)$ but not $\Theta(x^4)$ 
+
+\textbf{Answer:} $$\lim_{x\to\infty} \frac{x^3}{x^3} = 1>0 $$
+So, $x^3$ is $O(x^3)$ and $\Theta(x^3)$.
+$$\lim_{n\to\infty} \frac{x^3}{x^4} = \lim_{n\to\infty} \frac{1}{x} = 0$$
+So, $x^3$ is not $\Theta(x^4)$.
+
+\textbf{Question II:} For any real constants $a$ and $b>0$, we have 
+$(n+a)^b = \Theta(n^b)$
+
+\textbf{Answer:} $$\lim_{n\to\infty} \frac{(n+a)^b}{n^b} = \lim_{n\to\infty} \Big(\frac{n+a}{n}\Big)^b = \lim_{n\to\infty} \Big(1+\frac{a}{n}\Big)^b = 1>0 $$
+So, $(n+a)^b = \Theta(n^b)$.
+
+\textbf{Question III:} $(log(n))^k = O(n)$ for any k
+
+\textbf{Answer:} $$\lim_{n\to\infty} \frac{(log(n))^k}{n} = 0$$
+So, $(log(n))^k = o(n) = O(n)$ 
+
+\textbf{Question IV:} $\frac{n}{n+1} = 1 + O(\frac{1}{n})$
+
+\textbf{Answer:} $\frac{n}{n+1} = 1 + O(\frac{1}{n})$
+
+$\Rightarrow \frac{n}{n+1} -1 =  O(\frac{1}{n})$
+
+$\Rightarrow \frac{-1}{n+1} = O(\frac{1}{n})$
+
+Now $\frac{-1}{n+1} = O(\frac{1}{n+1})$, thus $\frac{-1}{n+1} = O(\frac{1}{n})$
+
+\textbf{Question V:} $\sum_{i=0}^{\lceil{log_{2} (n)\rceil}}2^i$ is $\Theta(n)$
+
+\textbf{Answer:} Let $log_{2} (n) = k$
+
+Now$$\sum_{i=0}^{k}2^i = \frac{2^{k+1}-1}{2-1} = 2*2^k - 1=2*2^{log_{2} (n)}-1=2n-1$$ 
+
+So, $$\lim_{n\to\infty} \frac{2n-1}{n} =\lim_{n\to\infty}(2- \frac{1}{n})=2>0 $$
+
+Therefore, $\sum_{i=0}^{\lceil{log_{2} (n)\rceil}}2^i$ is $\Theta(n)$
+
+
+\vspace{.3in}
+
+\begin{center}
+\center{ \textbf{\textit{\underline{Answer to the Question Number 4(a)}}}}
+\end{center}
+```{r}
+selsort <- function(A)
+{
+  n = length (A)
+  for (i in 1:(n-1))
+  {
+    index = i
+    for (j in (i+1):n)
+    {
+      if (A[j] < A[index])
+        index = j
+    }
+    temp = A[i]
+    A[i] = A[index]
+    A[index] = temp
+  }
+  return (A)
+}
+
+x = sample(1:100, 10, replace = TRUE)
+x
+a <- selsort(x)
+a
+```
+\begin{center}
+\center{ \textbf{\textit{\underline{Answer to the Question Number 4(b)}}}}
+\end{center}
+```{r}
+n = 100
+y = rnorm (n)
+
+# Mergesort code
+ptm <- proc.time ()
+mergearrays <- function(x,y){
+  m = length(x)
+  n = length(y)
+  if(m==0){
+    return(z = y)
+    }
+  if(n==0){
+    return(z = x)
+  }
+  if (x[1]<=y[1]){
+    return(z = c(x[1],mergearrays(x[-1],y)))
+  }else{
+    return(z = c(y[1],mergearrays(x,y[-1])))
+  }
+}
+mergesort <- function(x){
+  n = length(x)
+  mid = floor(n/2)
+  if(n > 1){
+    return(mergearrays(mergesort(x[1:mid]),mergesort(x[(mid+1):n])))
+  }else{
+    return(x)
+  }
+}
+merge<-mergesort(y)
+time_mergesort = proc.time () - ptm
+summary(time_mergesort)
+
+# Bubble sort code
+ptm <- proc.time ()
+bubblesort <- function(A)
+{
+  n = length (A)
+  repeat 
+  { 
+    swapped = FALSE
+    for (i in 1:(n-1))
+    {
+      if (A[i] > A[i+1])
+      {
+        temp = A[i]
+        A[i] = A[i+1]
+        A[i+1] = temp
+        swapped = TRUE
+      }
+    }
+    if (swapped == FALSE) 
+      break
+  }
+  return (A)
+}
+bubble<- bubblesort(y)
+time_bubblesort = proc.time () - ptm
+summary(time_bubblesort)
+```
+\begin{center}
+\center{ \textbf{\textit{\underline{Answer to the Question Number 4(c)}}}}
+\end{center}
+```{r}
+time_mergesort = rep (0 ,500)
+time_bubblesort = rep (0 ,500)
+for ( i in 1:500)
+{
+  ptm <- proc.time ()
+  mergesort ( y )
+  t1 = proc.time () - ptm
+  time_mergesort [i] = t1 [["elapsed"]]
+  ptm <- proc.time ()
+  bubblesort ( y )
+  t2 = proc.time () - ptm
+  time_bubblesort [i]= t2 [["elapsed"]]
+}
+summary(time_mergesort)
+summary(time_bubblesort)
+
+
+```
+Time complexities of mergesort and bubblesort are $O(nlog(n))$ and $O(n^2)$ respectively. So, for large n mergesort will take much much less time than bubblesort, which agrees the summary of the results.
+
+
+

@@ -1,0 +1,101 @@
+---
+title: "Homework 2"
+author: "Md Kamrul Hasan Khan"
+date: "March 3, 2017"
+output: pdf_document
+---
+\begin{center}
+\textbf{\textit{\underline{Answer to the Question Number 1}}}
+\end{center}
+Given, $p(x) = sin(x) \hspace{1 in}$ [where $x \in (0,\frac{\pi}{2})$]
+
+Now the cdf of $p(x)$ will be $P(x) = \int_{0}^{x} sin(x)dx= -cos(x)\Big|_0^x =1-cos(x)$
+
+$\hspace{.45 in} \Rightarrow u = 1- cos(x)$ $\hspace{1 in}$ [where $u \sim Uinf(0,1)$]
+
+$\hspace{.45 in} \Rightarrow cos(x) = 1-u$ 
+
+$\hspace{.45 in} \Rightarrow x = arccos(1-u)$ 
+
+```{r}
+set.seed(7)
+n = 10000
+u = runif(n)
+x = acos(u)
+hist(x, freq = F, breaks = 30, col = "navajowhite4")
+curve(sin(x), 0, pi/2, col = "blue", add = T, lw = 2)
+```
+```{r}
+set.seed(7)
+arsample <- function(dist, minsup, maxsup, maxdist, n)
+{
+  rv = rep(0,n)
+  for (i in 1:n)
+  {
+    while(1)
+    {
+      x = runif(1, minsup, maxsup)
+      y = runif(1, 0, maxdist)
+      if (y <= dist(x))
+      {
+        rv[i] = x
+        break
+      }
+    }
+  }
+  return(rv)
+}
+
+sinfun <- function(x)
+{
+  return(sin(x))
+}
+
+x = arsample(sinfun, 0, pi/2, 1, 10000)
+hist (x, freq = F, breaks = 30, col ="navajowhite4")
+curve (sinfun, add = T, col = "maroon1")
+```
+\begin{center}
+\textbf{\textit{\underline{Answer to the Question Number 2}}}
+\end{center}
+Given, $p(x) = \lambda x^{-\lambda-1}$ where $x \in [1,\infty)$ and $\lambda \geq 2$
+
+So, the cdf will be
+
+$P(x) = \int_{1}^{x}\lambda x^{-\lambda-1} dx = -x^{-\lambda}\Big|_1^x= 1-x^{-\lambda}$
+
+Let, $u = 1-x^{-\lambda}$ $\hspace{1 in}$ [where $u \sim Uinf(0,1)$]
+
+$\Rightarrow x^{-\lambda} = 1-u$
+
+$\Rightarrow x = (1-u)^{-1/\lambda}$
+
+```{r}
+set.seed(7)
+pareto <- function(lambda)
+{
+  u = runif(n)
+  x = 1/u^(1/lambda)
+}
+n = 100
+x = pareto(3)
+hist(x, breaks = 30, freq = F, col = "navajowhite4", xlim = c(1,5))
+
+fy <- function(y,lambda) lambda*(y^(-lambda-1))
+curve(fy(x,3), add = T, col = "blue", lw = 2)
+
+```
+Mean
+
+$E(X^{2.736})= \int_{1}^{\infty} x^{2.736}\lambda x^{-\lambda-1} dx = \lambda \int_{1}^{\infty} x^{-\lambda+1.736} dx = \lambda \frac{x^{-\lambda+2.736}}{-\lambda+2.736}\Bigg|_1^\infty= 3 \frac{x^{-3+2.736}}{-3+2.736}\Bigg|_1^\infty=3 \frac{1}{-0.264x^{0.264}}\Bigg|_1^\infty = - 0 +\frac{3}{0.264}= 11.36$
+
+```{r}
+set.seed(12345)
+lambda = 3
+mean(pareto(lambda)^2.736)
+```
+
+
+
+
+

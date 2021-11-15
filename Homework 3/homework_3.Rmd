@@ -1,0 +1,100 @@
+---
+title: "Homework 3"
+author: "Md Kamrul Hasan Khan"
+date: "March 17, 2017"
+output: pdf_document
+---
+\begin{center}
+\textbf{\textit{\underline{Answer to the Question Number 1}}}
+\end{center}
+
+```{r}
+set.seed(7)
+# Initial values
+
+a0 = 2.0
+b0 = 6.4
+n = 74
+s = 16
+
+MLE_theta <- s/n
+MLE_theta
+
+M = 10000
+
+# storing simulated samples
+
+s_store = matrix(0,M)
+theta_store = matrix(0,M)
+
+# for loop start
+
+for (iter in 1:M)
+{
+  theta = rbeta(1, a0+s, b0+n-s)
+  s = rbinom(1, n, theta)
+  
+  theta_store[iter,] = theta
+  s_store[iter,] = s
+}
+
+density_s = table(s_store)/M
+
+plot(s_store,type = "l", main = "Trace plot for s")
+plot(theta_store,type = "l", main = "Trace plot for theta")
+hist(s_store, breaks = 30, freq = F, col = "navajowhite4", main = "Histogram for s")
+
+posterior_median_theta <- median(theta_store)
+posterior_median_theta
+
+```
+So, posterior median of $\theta$ based on is closed to the maximum likelihood estimate $s/n$.
+
+We know median is insensitive to outlier. So, posterior median is insensitive to initial values.
+
+\begin{center}
+\textbf{\textit{\underline{Answer to the Question Number 2 (Bonus problem)}}}
+\end{center}
+
+```{r}
+set.seed(7)
+# Initial values
+
+a0 = 2.0
+b0 = 6.4
+s = 16
+n = 20
+lambda = 64
+
+M = 10000
+
+# storing simulated samples
+
+s_store = matrix(0,M)
+theta_store = matrix(0,M)
+n_store = matrix(0,M)
+
+# for loop start
+
+for (iter in 1:M)
+{
+  theta = rbeta(1, a0+s, b0+n-s)
+  n = s + rpois(1,(1-theta)*lambda)
+  s = rbinom(1, n, theta)
+  
+  theta_store[iter, ] = theta
+  n_store[iter, ] = n
+  s_store[iter, ] = s
+}
+
+
+hist(s_store, breaks = 30, freq = F, col = "navajowhite4", main = "Histogram for s")
+hist(n_store, breaks = 30, freq = F, col = "navajowhite4", main = "Histogram for n")
+
+posterior_median_theta <- median(theta_store)
+posterior_median_theta
+
+```
+Yes, this posterior median of theta is similar to the posterior median of the problem 1, because theta is independept of n but s depends on n.
+
+
